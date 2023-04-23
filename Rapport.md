@@ -29,6 +29,26 @@ Pour les préférences de l'utilisateur, on a décidé de stocker les informatio
 
 ### 6. Les modèles d'exploration de données et/ou d'apprentissage machine que vous avez utilisés avec les métriques obtenues. 
 
+Afin de réaliser le système de recommandation, nous avions besoin des préférences de l'utilisateur stockées dans un fichier JSON. Les données sont donc extraites de ce fichier puis regroupées dans des tableaux correspondants à chaque image.
+Par la suite un tableau contenant les résulats des préférences est également créés, il peut contenir la valeur 'favorite' si l'utilisateur a aimé la photo ou 'not_favorite' dans le cas contraire. Ces tableaux sont par la suite chargés dans des dataset pandas. 
+
+Une fois les données d'entrée correctement préparées et formatées, nous avons pu par la suite mettre en place le système de recommandation.  
+
+Nous avons choisi pour cela d'utiliser un classificateur forestier aléatoire qui est une méthode de classification en apprentissage automatique qui combine plusieurs arbres de décision pour produire un modèle de prédiction. Ce dernier a été choisi pour plusieurs raisons:
+- il est capable de produire des modèles de prédiction très précis, ce qui est très utile pour les tâches de classification où la précision est primordiale
+- il est très simple à utiliser de ne nécessite pas beaucoup de paramètres à régler
+- il fourni également des information sur l'importance de chaque variable dans la décision, cela permet de comprendre les relations entre les données d'entrées et le résultat obtenu
+Ses avantages en comparaison aux classificateur utilisant des machines à vecteurs de support (comme svc) est qu'il est possible de contrer le problème de sur-ajustement en changeant la taille de l'arbre.
+Pour ces raisons le classicateur Random Forest nous a paru être un choix pertinent.
+
+Une fois le système de recommandation mis en place, nous nous sommes heurté à un problème lors de nos tests. Lorsqu'un utilisateur souhaite obtenir une recommandation et fourni des données qui n'ont pas encore connues en tant que label dans notre arbre décision, cela provoque une erreur, il a donc été décidé de mettre en place de système de substitution aléatoire pour gérer ce problème. Lors que les que les utilisateurs utilisent la fonction de recommandation, nous vérifions si les valeurs fournies existent déjà dans notre arbre, si ce n'est pas le cas alors elles sont remplacées aléatoirement pas des valeurs existantes.
+
+Nous avons par la suite poursuivi nos tests afin de d'évaluer la précision et la pertinence du système de recommandation. Pour cela, plusieurs profondeurs d'arbres on été testées, entre 2 et 5. La profondeur d'arbre est le principal élément permettant d'ajuster la précision de la recommandation, cependant une profondeur trop grande est plus susceptible de sur-ajuster les données d'entraînement, ce qui signifie qu'il sera très précis sur les données d'entraînement mais moins précis sur les nouvelles données. Dans notre cas, les données étant simple, elles ne nécessitent pas des arbres avec une grande profondeur.
+
+Après avoir pu régler ces problèmes nous avons pu conclure nos tests du système de recommandation en utilisant des préférences fixes et non plus aléatoires et tester les prédictions pour des données présentes dans ces préférences.
+Ces derniers tests nous ont permis de constater le bon fonctionnement de la fonctionnalité de recommandation et de confirmer le choix du Random Forest.
+
+
 ### 7. L'auto-évaluation de votre travail. 
 
 Dans ce projet, on a mis en place un système de recommandation d'images en Python. On a réussi à collecter plus de 100 images en utilisant des données en libre accès, enregistrant toutes les métadonnées pertinentes dans des fichiers JSON. On a également annoté les images en utilisant des algorithmes de regroupement pour trouver les couleurs prédominantes et en ajoutant des tags, qui ont été saisis manuellement ou collectés auprès des utilisateurs. On a construit des profils d'utilisateurs à partir des informations recueillies en utilisant les images sélectionnées, et on a utilisé ces profils pour recommander des images pertinentes. 
