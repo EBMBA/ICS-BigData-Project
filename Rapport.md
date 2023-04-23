@@ -14,11 +14,60 @@ Le rapport final du projet doit être un document de 5 pages présentant les dif
 
  
 
-### 2. Sources des données de vos images et leurs licences. 
+### 2. Collecte de données
 
-### 3. Taille de vos données. 
+Nous avons collecté nos données depuis Wikidata. Ces données sont sous licence CC0 1.0 Universal (CC0 1.0) cela signifie que le créateur d'une œuvre, telle qu'une photographie ou une pièce de musique, peut renoncer à tous les droits d'auteur et droits connexes sur l'œuvre afin de permettre à quiconque de l'utiliser, de la modifier ou de la distribuer librement, sans avoir à demander la permission ou à fournir une attribution (source https://joinup.ec.europa.eu/licence/cc0-10-universal-cc0-10-public-domain-dedication). 
 
-### 4. Informations que vous avez décidé de stocker pour chaque image. 
+Les données collectées lors de ce projet l'ont été grâce à l'API de Wikidata. Cette API nous a permis d'extraire, de manière automatique grace au SPARQL, des informations sur des taxons spécifiques à partir de la base de données de Wikidata. Nous avons alors extrait les noms, les images, les noms scientifiques, les familles et les emplacements des taxons de la base de données de Wikidata (en limitant le nombre de données récoltées). Une fois les données extraites les images sont alors téléchargées si elles ne sont pas déjà présentantes dans nos données collectées. Le reste des informations des images téléchargées sont stockées dans des fichiers JSON possèdant comme nom le nom de l'image. 
+
+Nous avons collecté près de 600 images pour une taille totale de 921Mo. 
+
+### 3. Étiquetage et annotation
+
+Nous avons collecté certaines informations sur chacune des images téléchargés. Les premières informations collectées viennent des requêtes SPARQL faitent lors de leur téléchargement. Ces informations sont : les noms, les images, les noms scientifiques, les familles et les emplacements des taxons. Puis dans un second temps nous avons ajouter des informations provenant de l'image en elle-même comme : sa longueur, sa largeur, son format (le type de fichier), son mode (RGB ou autre). Nous avons aussi récupéré des données EXIF des images afin d'agrandir notre nombre de dimension étudiée. Depuis les données EXIF nous avons récupéré : date à laquelle l'image a été prise, son copyright, son orientation (paysage / portrait), le modèle et la marque de l'appareil photo. 
+
+De plus nous avons analysés l'image afin d'établir 2 clusters en se basant sur les couleurs de chaque pixels. Cela nous a permit d'établir les 2 couleurs prédominantes de chacune de nos images. Pour cela nous avons utilisé K-Means. Pour faciliter la visualisation nous avons approchés ces "couleurs prédominantes" par les noms de couleurs les plus proches avec WebColors. Ce qui nous permettra de regrouper les couleurs prédominantes trouvées sous des termes compréhensibles et facilement regroupable.
+
+Toutes ces informations sont rajoutées au fichier JSON de chaque image.
+
+### 4. Visualisation des données
+
+Nous avons utilisé différents types de visualisation afin de pouvoir profiter de l'ensemble des dimensions collectées lors des parties *Collecte des données* et *Étiquetage et annotation*.
+
+Pour réaliser cette partie nous avons utilisé matplotlib et wordcloud. 
+
+Voici les visualisations établis à partir de l'ensemble des données collectées :
+
+* Diagramme du nombre de photos par année :
+
+![photos_by_year](./img/photo_by_year.png)
+
+* Diagramme du nombre de photos par année et par marque d'appareil :
+
+![Nombre de photos par année et par marque d'appareil](./img/photo_by_year_by_model.png)
+
+* Camembert de la proportion d'images par famille (les 20 plus grandes familles) :
+
+![Nombre d'images par famille (les 20 plus grandes familles)](img/photo_by_families.png)
+
+* Nuage de mots de la proportion d'images par famille :
+
+![Nuage de mots de la proportion d'images par famille](./img/families_word_cloud.png)
+
+* Camembert de la proportion des couleurs dominantes (les 10 plus nombreuses):
+
+![Camembert de la proportion des couleurs dominantes](./img/dominated_colors.png)
+
+* Nuage de mots de la proportion des couleurs dominantes :
+
+![Nuage de mots de la proportion des couleurs dominantes](./img/dominated_colors_word_cloud.png)
+
+* Répartition des zones géographique des taxons :
+
+![Répartition des zones géographique des taxons](img/geographical_zone.png)
+
+
+Dans cette partie nous avons donc utilisé 3 types de représentation : des camemberts, des histogramme et des nuages de mots. Les camemberts sont particulièrement utiles pour visualiser les parts relatives d'un ensemble de données. Les proportions de chaque catégorie sont représentées sous forme de segments de cercle, ce qui permet de visualiser rapidement les catégories qui sont les plus importantes et celles qui sont les moins importantes. Tandis que les nuages de mots sont utilisés pour visualiser les fréquences des mots dans un ensemble de données textuelles. Les mots les plus fréquents sont représentés de manière plus grande, ce qui permet de visualiser rapidement les mots les plus importants. Enfin les histogrammes sont utilisés pour visualiser la distribution des données quantitatives. Les données sont regroupées en catégories et représentées sous forme de barres, où la hauteur de chaque barre représente la fréquence de la catégorie. Les histogrammes permettent de visualiser rapidement la forme de la distribution des données, par exemple si elles suivent une distribution normale ou non.
 
 ### 5. Informations concernant les préférences de l'utilisateur 
 
