@@ -2,7 +2,7 @@
 
 ### Projet partie 1
 
-### 1. Le but de votre projet 
+### 1. Le but de votre projet 
 
 Le but de ce projet est de développer un système de recommandation d'images basé sur les préférences de l'utilisateur en utilisant Python. Le projet est divisé en plusieurs tâches, qui incluent la collecte, l'annotation, l'analyse et la visualisation des données, ainsi que la création du système de recommandation et des tests. 
 
@@ -14,7 +14,7 @@ Le rapport final du projet doit être un document de 5 pages présentant les dif
 
  
 
-### 2. Collecte de données
+### 2. Collecte de données
 
 Nous avons collecté nos données depuis Wikidata. Ces données sont sous licence CC0 1.0 Universal (CC0 1.0) cela signifie que le créateur d'une œuvre, telle qu'une photographie ou une pièce de musique, peut renoncer à tous les droits d'auteur et droits connexes sur l'œuvre afin de permettre à quiconque de l'utiliser, de la modifier ou de la distribuer librement, sans avoir à demander la permission ou à fournir une attribution (source https://joinup.ec.europa.eu/licence/cc0-10-universal-cc0-10-public-domain-dedication). 
 
@@ -69,12 +69,17 @@ Voici les visualisations établis à partir de l'ensemble des données collecté
 
 Dans cette partie nous avons donc utilisé 3 types de représentation : des camemberts, des histogramme et des nuages de mots. Les camemberts sont particulièrement utiles pour visualiser les parts relatives d'un ensemble de données. Les proportions de chaque catégorie sont représentées sous forme de segments de cercle, ce qui permet de visualiser rapidement les catégories qui sont les plus importantes et celles qui sont les moins importantes. Tandis que les nuages de mots sont utilisés pour visualiser les fréquences des mots dans un ensemble de données textuelles. Les mots les plus fréquents sont représentés de manière plus grande, ce qui permet de visualiser rapidement les mots les plus importants. Enfin les histogrammes sont utilisés pour visualiser la distribution des données quantitatives. Les données sont regroupées en catégories et représentées sous forme de barres, où la hauteur de chaque barre représente la fréquence de la catégorie. Les histogrammes permettent de visualiser rapidement la forme de la distribution des données, par exemple si elles suivent une distribution normale ou non.
 
-### 5. Informations concernant les préférences de l'utilisateur 
+### 5. Informations concernant les préférences de l'utilisateur 
 
 Pour les préférences de l'utilisateur, on a décidé de stocker les informations suivantes :
 - Les couleurs prédominantes de l'image
 - La famille
 - La localisation
+ 
+Dans cette partie, 10 images sont choisies au hasard et viendront créer les préférences qu'aime l'utilisateur. Et 10 autres images seront choisis aléatoirement qui viendront créer les préférences que n'aime pas l'utilisateur. Les métadonnées de chaque image utilisées sont stockées dans un fichier Json nommé "user_data.json" qui nous donnera donc les préférences pour un utilisateur. 
+L'utilisateur est simulé au lancement du script.
+
+Dans le futur on pourrais ajoutez des informations supplémentaires des métadonnées telles que la date de création, la résolution, la taille, le type de fichier, l'emplacement géographique, etc. En outre, des informations sur le contexte de l'image peuvent être utiles, telles que l'objet, la scène ou encore l'événement représenté s'il y'en a un. Ces informations peuvent être utilisées pour aider à la classification et au regroupement des images en fonction de leurs caractéristiques communes.
 
 ### 6. Les modèles d'exploration de données et/ou d'apprentissage machine que vous avez utilisés avec les métriques obtenues. 
 
@@ -110,10 +115,15 @@ En conclusion, on est satisfait de notre travail et on a réussi à atteindre no
 
  
 
-### 8. Remarques concernant les séances pratiques, les exercices et les possibilités d'amélioration. 
+### 8. Remarques concernant les séances pratiques, les exercices et les possibilités d'amélioration. 
 
-Concernant les exercices, j'ai remarqué qu'ils sont souvent bien conçus et pertinents pour le sujet étudié.
+Concernant les exercices, nous avons remarqué qu'ils sont souvent bien conçus et pertinents pour le sujet étudié. Les séances pratiques sont très utiles pour mettre en pratique les concepts théoriques, mais il serait bénéfique d'avoir plus de temps pour travailler sur les exercices.
 
 ### 9. Conclusion 
 
+Le projet de création d'un système de recommandation d'images personnalisé en utilisant Python a été mené à bien. Nous avons utilisé l'API de Wikidata pour collecter près de 600 images pour une taille totale de 921Mo. Nous avons ensuite collecté des informations sur chacune des images en utilisant les requêtes SPARQL pour extraire des informations de base, puis en analysant les images pour récupérer des informations supplémentaires telles que les données EXIF, les dimensions de l'image, les couleurs prédominantes, etc.
+
+Nous avons créé des graphiques et des tableaux pour visualiser les caractéristiques des images téléchargées et avons utilisé des approches telles que le filtrage collaboratif, le filtrage basé sur le contenu et une approche hybride pour construire notre système de recommandation. Nous avons également effectué des tests pour vérifier si les différentes fonctions du projet fonctionnent correctement.
+
+En conclusion, ce projet nous a permis de créer un système de recommandation d'images personnalisé en utilisant Python en automatisant toutes les tâches liées à l'acquisition, l'annotation, l'analyse et la visualisation des données. Cela a été réalisé en utilisant une variété d'approches telles que le traitement du langage naturel, le traitement d'images et l'apprentissage automatique. Bien que ce projet ait atteint ses objectifs, il y a encore des améliorations possibles dans l'avenir, comme la collecte de données supplémentaires et l'utilisation de techniques plus avancées pour améliorer la qualité des recommandations.
  
