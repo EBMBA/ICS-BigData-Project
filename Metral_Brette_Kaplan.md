@@ -18,15 +18,15 @@ Le rapport final du projet doit être un document de 5 pages présentant les dif
 
 Nous avons collecté nos données depuis Wikidata. Ces données sont sous licence CC0 1.0 Universal (CC0 1.0) cela signifie que le créateur d'une œuvre, telle qu'une photographie ou une pièce de musique, peut renoncer à tous les droits d'auteur et droits connexes sur l'œuvre afin de permettre à quiconque de l'utiliser, de la modifier ou de la distribuer librement, sans avoir à demander la permission ou à fournir une attribution (source https://joinup.ec.europa.eu/licence/cc0-10-universal-cc0-10-public-domain-dedication). 
 
-Les données collectées lors de ce projet l'ont été grâce à l'API de Wikidata. Cette API nous a permis d'extraire, de manière automatique grace au SPARQL, des informations sur des taxons spécifiques à partir de la base de données de Wikidata. Nous avons alors extrait les noms, les images, les noms scientifiques, les familles et les emplacements des taxons de la base de données de Wikidata (en limitant le nombre de données récoltées). Une fois les données extraites les images sont alors téléchargées si elles ne sont pas déjà présentantes dans nos données collectées. Le reste des informations des images téléchargées sont stockées dans des fichiers JSON possèdant comme nom le nom de l'image. 
+Les données collectées lors de ce projet l'ont été grâce à l'API de Wikidata. Cette API nous a permis d'extraire, de manière automatique grâce au SPARQL, des informations sur des taxons spécifiques à partir de la base de données de Wikidata. Nous avons alors extrait les noms, les images, les noms scientifiques, les familles et les emplacements des taxons de la base de données de Wikidata (en limitant le nombre de données récoltées). Une fois les données extraites les images sont alors téléchargées si elles ne sont pas déjà présentes dans nos données collectées. Le reste des informations des images téléchargées sont stockées dans des fichiers JSON possédant comme nom le nom de l'image. 
 
 Nous avons collecté près de 600 images pour une taille totale de 921Mo. 
 
 ### 3. Étiquetage et annotation
 
-Nous avons collecté certaines informations sur chacune des images téléchargés. Les premières informations collectées viennent des requêtes SPARQL faitent lors de leur téléchargement. Ces informations sont : les noms, les images, les noms scientifiques, les familles et les emplacements des taxons. Puis dans un second temps nous avons ajouter des informations provenant de l'image en elle-même comme : sa longueur, sa largeur, son format (le type de fichier), son mode (RGB ou autre). Nous avons aussi récupéré des données EXIF des images afin d'agrandir notre nombre de dimension étudiée. Depuis les données EXIF nous avons récupéré : date à laquelle l'image a été prise, son copyright, son orientation (paysage / portrait), le modèle et la marque de l'appareil photo. 
+Nous avons collecté certaines informations sur chacune des images téléchargées. Les premières informations collectées viennent des requêtes SPARQL faitent lors de leur téléchargement. Ces informations sont : les noms, les images, les noms scientifiques, les familles et les emplacements des taxons. Puis dans un second temps nous avons ajouté des informations provenant de l'image en elle-même comme : sa longueur, sa largeur, son format (le type de fichier), son mode (RGB ou autre). Nous avons aussi récupéré des données EXIF des images afin d'agrandir notre nombre de dimensions étudiées. Depuis les données EXIF nous avons récupéré : date à laquelle l'image a été prise, son copyright, son orientation (paysage / portrait), le modèle et la marque de l'appareil photo. 
 
-De plus nous avons analysés l'image afin d'établir 2 clusters en se basant sur les couleurs de chaque pixels. Cela nous a permit d'établir les 2 couleurs prédominantes de chacune de nos images. Pour cela nous avons utilisé K-Means. Pour faciliter la visualisation nous avons approchés ces "couleurs prédominantes" par les noms de couleurs les plus proches avec WebColors. Ce qui nous permettra de regrouper les couleurs prédominantes trouvées sous des termes compréhensibles et facilement regroupable.
+De plus nous avons analysé l'image afin d'établir 2 clusters en se basant sur les couleurs de chaque pixel. Cela nous a permis d'établir les 2 couleurs prédominantes de chacune de nos images. Pour cela nous avons utilisé K-Means. Pour faciliter la visualisation nous avons approchés ces "couleurs prédominantes" par les noms de couleurs les plus proches avec WebColors. Ce qui nous permettra de regrouper les couleurs prédominantes trouvées sous des termes compréhensibles et facilement regroupable.
 
 Toutes ces informations sont rajoutées au fichier JSON de chaque image.
 
@@ -36,7 +36,7 @@ Nous avons utilisé différents types de visualisation afin de pouvoir profiter 
 
 Pour réaliser cette partie nous avons utilisé matplotlib et wordcloud. 
 
-Voici les visualisations établis à partir de l'ensemble des données collectées :
+Voici les visualisations établies à partir de l'ensemble des données collectées :
 
 * Diagramme du nombre de photos par année :
 
@@ -67,7 +67,7 @@ Voici les visualisations établis à partir de l'ensemble des données collecté
 ![Répartition des zones géographique des taxons](img/geographical_zone.png)
 
 
-Dans cette partie nous avons donc utilisé 3 types de représentation : des camemberts, des histogramme et des nuages de mots. Les camemberts sont particulièrement utiles pour visualiser les parts relatives d'un ensemble de données. Les proportions de chaque catégorie sont représentées sous forme de segments de cercle, ce qui permet de visualiser rapidement les catégories qui sont les plus importantes et celles qui sont les moins importantes. Tandis que les nuages de mots sont utilisés pour visualiser les fréquences des mots dans un ensemble de données textuelles. Les mots les plus fréquents sont représentés de manière plus grande, ce qui permet de visualiser rapidement les mots les plus importants. Enfin les histogrammes sont utilisés pour visualiser la distribution des données quantitatives. Les données sont regroupées en catégories et représentées sous forme de barres, où la hauteur de chaque barre représente la fréquence de la catégorie. Les histogrammes permettent de visualiser rapidement la forme de la distribution des données, par exemple si elles suivent une distribution normale ou non.
+Dans cette partie nous avons donc utilisé 3 types de représentation : des camemberts, des histogrammes et des nuages de mots. Les camemberts sont particulièrement utiles pour visualiser les parts relatives d'un ensemble de données. Les proportions de chaque catégorie sont représentées sous forme de segments de cercle, ce qui permet de visualiser rapidement les catégories qui sont les plus importantes et celles qui sont les moins importantes. Tandis que les nuages de mots sont utilisés pour visualiser les fréquences des mots dans un ensemble de données textuelles. Les mots les plus fréquents sont représentés de manière plus grande, ce qui permet de visualiser rapidement les mots les plus importants. Enfin les histogrammes sont utilisés pour visualiser la distribution des données quantitatives. Les données sont regroupées en catégories et représentées sous forme de barres, où la hauteur de chaque barre représente la fréquence de la catégorie. Les histogrammes permettent de visualiser rapidement la forme de la distribution des données, par exemple si elles suivent une distribution normale ou non.
 
 ### 5. Informations concernant les préférences de l'utilisateur 
 
@@ -77,14 +77,14 @@ Pour les préférences de l'utilisateur, on a décidé de stocker les informatio
 - La localisation
  
 Dans cette partie, 10 images sont choisies au hasard et viendront créer les préférences qu'aime l'utilisateur. Et 10 autres images seront choisis aléatoirement qui viendront créer les préférences que n'aime pas l'utilisateur. Les métadonnées de chaque image utilisées sont stockées dans un fichier Json nommé "user_data.json" qui nous donnera donc les préférences pour un utilisateur. 
-L'utilisateur est simulé au lancement du script.
+L'utilisateur est simulé au lancement du script. Nous le lançons 10 fois pour avoir un échantillon sur 10 utilisateurs.
 
 Dans le futur on pourrais ajoutez des informations supplémentaires des métadonnées telles que la date de création, la résolution, la taille, le type de fichier, l'emplacement géographique, etc. En outre, des informations sur le contexte de l'image peuvent être utiles, telles que l'objet, la scène ou encore l'événement représenté s'il y'en a un. Ces informations peuvent être utilisées pour aider à la classification et au regroupement des images en fonction de leurs caractéristiques communes.
 
 ### 6. Les modèles d'exploration de données et/ou d'apprentissage machine que vous avez utilisés avec les métriques obtenues. 
 
 Afin de réaliser le système de recommandation, nous avions besoin des préférences de l'utilisateur stockées dans un fichier JSON. Les données sont donc extraites de ce fichier puis regroupées dans des tableaux correspondants à chaque image.
-Par la suite un tableau contenant les résulats des préférences est également créés, il peut contenir la valeur 'favorite' si l'utilisateur a aimé la photo ou 'not_favorite' dans le cas contraire. Ces tableaux sont par la suite chargés dans des dataset pandas. 
+Par la suite un tableau contenant les résultats des préférences est également créés, il peut contenir la valeur 'favorite' si l'utilisateur a aimé la photo ou 'not_favorite' dans le cas contraire. Ces tableaux sont par la suite chargés dans des dataset pandas. 
 
 Une fois les données d'entrée correctement préparées et formatées, nous avons pu par la suite mettre en place le système de recommandation.  
 
@@ -92,12 +92,12 @@ Nous avons choisi pour cela d'utiliser un classificateur forestier aléatoire qu
 - il est capable de produire des modèles de prédiction très précis, ce qui est très utile pour les tâches de classification où la précision est primordiale
 - il est très simple à utiliser de ne nécessite pas beaucoup de paramètres à régler
 - il fourni également des information sur l'importance de chaque variable dans la décision, cela permet de comprendre les relations entre les données d'entrées et le résultat obtenu
-Ses avantages en comparaison aux classificateur utilisant des machines à vecteurs de support (comme svc) est qu'il est possible de contrer le problème de sur-ajustement en changeant la taille de l'arbre.
-Pour ces raisons le classicateur Random Forest nous a paru être un choix pertinent.
+Ses avantages en comparaison aux classificateurs utilisant des machines à vecteurs de support (comme svc) est qu'il est possible de contrer le problème de sur-ajustement en changeant la taille de l'arbre.
+Pour ces raisons, le classificateur Random Forest nous a paru être un choix pertinent.
 
-Une fois le système de recommandation mis en place, nous nous sommes heurté à un problème lors de nos tests. Lorsqu'un utilisateur souhaite obtenir une recommandation et fourni des données qui n'ont pas encore connues en tant que label dans notre arbre décision, cela provoque une erreur, il a donc été décidé de mettre en place de système de substitution aléatoire pour gérer ce problème. Lors que les que les utilisateurs utilisent la fonction de recommandation, nous vérifions si les valeurs fournies existent déjà dans notre arbre, si ce n'est pas le cas alors elles sont remplacées aléatoirement pas des valeurs existantes.
+Une fois le système de recommandation mis en place, nous nous sommes heurté à un problème lors de nos tests. Lorsqu'un utilisateur souhaite obtenir une recommandation et fourni des données qui n'ont pas encore connu en tant que label dans notre arbre décision, cela provoque une erreur, il a donc été décidé de mettre en place de système de substitution aléatoire pour gérer ce problème. Lorsque les utilisateurs utilisent la fonction de recommandation, nous vérifions si les valeurs fournies existent déjà dans notre arbre, si ce n'est pas le cas alors elles sont remplacées aléatoirement pas des valeurs existantes.
 
-Nous avons par la suite poursuivi nos tests afin de d'évaluer la précision et la pertinence du système de recommandation. Pour cela, plusieurs profondeurs d'arbres on été testées, entre 2 et 5. La profondeur d'arbre est le principal élément permettant d'ajuster la précision de la recommandation, cependant une profondeur trop grande est plus susceptible de sur-ajuster les données d'entraînement, ce qui signifie qu'il sera très précis sur les données d'entraînement mais moins précis sur les nouvelles données. Dans notre cas, les données étant simple, elles ne nécessitent pas des arbres avec une grande profondeur.
+Nous avons par la suite poursuivi nos tests afin de d'évaluer la précision et la pertinence du système de recommandation. Pour cela, plusieurs profondeurs d'arbres ont été testées, entre 2 et 5. La profondeur d'arbre est le principal élément permettant d'ajuster la précision de la recommandation, cependant une profondeur trop grande est plus susceptible de sur-ajuster les données d'entraînement, ce qui signifie qu'il sera très précis sur les données d'entraînement mais moins précis sur les nouvelles données. Dans notre cas, les données étant simple, elles ne nécessitent pas des arbres avec une grande profondeur.
 
 Après avoir pu régler ces problèmes nous avons pu conclure nos tests du système de recommandation en utilisant des préférences fixes et non plus aléatoires et tester les prédictions pour des données présentes dans ces préférences.
 Ces derniers tests nous ont permis de constater le bon fonctionnement de la fonctionnalité de recommandation et de confirmer le choix du Random Forest.
