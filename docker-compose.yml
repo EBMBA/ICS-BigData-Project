@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  notebook:
+      image: jupyter/datascience-notebook
+
+      ports:
+        - "8888:8888"
+      volumes:
+      - ${PWD}:/home/jovyan/work
+      environment:
+        - JUPYTER_ENABLE_LAB=yes
+      command: start-notebook.sh --NotebookApp.token=''
+
+      # depends_on:
+      #   - 
+
+#  download:
+#     build: download/.
+#     restart: on-failure
+#     volumes:
+#       - ./images:/images
+
