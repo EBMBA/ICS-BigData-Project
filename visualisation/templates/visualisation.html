@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Visualisation d'images</title>
+</head>
+<body>
+	<h1>Visualisation d'images</h1>
+	<ul>
+	{% for image in images %}
+		<li><img src="{{ url_for('static', filename=image) }}"></li>
+	{% endfor %}
+	</ul>
+</body>
+</html>
