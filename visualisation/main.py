@@ -8,7 +8,6 @@ app = Flask(__name__, static_folder='./visualisation_images')
 
 @app.route('/visualisation')
 def visualisation():
-    # obtenir tous les noms de fichier dans le dossier image
     images = [f for f in os.listdir(app.static_folder) if os.path.isfile(os.path.join(app.static_folder, f))]
     return render_template('visualisation.html', images=images)
 

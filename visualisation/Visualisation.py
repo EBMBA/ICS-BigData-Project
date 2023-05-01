@@ -6,8 +6,12 @@ import matplotlib.pyplot as plot
 from wordcloud import WordCloud
 from pyspark import SparkConf
 from pyspark.context import SparkContext
+from pyspark import sql
 from pyspark.sql import SparkSession 
 import pyarrow 
+import matplotlib.pyplot as plt
+from pyspark.sql.functions import collect_list, concat_ws, explode
+
 
 
 class Visualisation:
@@ -59,57 +63,63 @@ class Visualisation:
                     "year": date_time
                 })
 
-        self.df = pd.DataFrame(data)
-        spark = SparkSession.builder.getOrCreate()
-        self.dfspark = spark.createDataFrame(self.df)
+        # self.df = pd.DataFrame(data)
+        self.spark = SparkSession.builder.getOrCreate()
+        self.dfspark = self.spark.createDataFrame(data)
+        self.dfspark.createOrReplaceTempView("visualisation")
+
 
 
     def get_years(self):
+        year_counts = self.spark.sql("SELECT Year, COUNT(YEAR) AS Number FROM  visualisation GROUP BY year ORDER by year")
 
-        year_counts = self.df.groupby('year').size()
+        years = [str(row['Year']) for row in year_counts.collect() if row['Year'] != None and row['Year'] != "0000"]
+        numbers = [row['Number'] for row in year_counts.collect() if row['Year'] != None and row['Year'] != "0000" ]
 
-        plot.bar(year_counts.index, year_counts.values)
+        plot.bar(years, numbers)
         plot.xlabel('Année')
         plot.ylabel('Nombre de photos')
         plot.xticks(rotation=90)
 
         plot.savefig('./visualisation_images/years.png')
         plot.clf()
-
-    def get_years_spark(self):
-
-        year_counts = self.df.groupby('year').size()
-
-        plot.bar(year_counts.index, year_counts.values)
-        plot.xlabel('Année')
-        plot.ylabel('Nombre de photos')
-        plot.xticks(rotation=90)
-
-        plot.savefig('./visualisation_images/years.png')
-        plot.clf()
-
 
     def get_devices(self):
-        grouped = self.df.groupby(['year', 'make']).size()
+        devices = self.dfspark.groupby(['year', 'make']).agg({"make": "count"}).withColumnRenamed("count(make)", "count")
+        devices.createOrReplaceTempView("devices")
+        
+        makes = self.spark.sql("SELECT DISTINCT make FROM devices ORDER BY make").collect()
 
-        grouped = grouped.reset_index(name='count')
+        nr = math.ceil(len(makes) / 2)
+        fig, axes = plot.subplots(nrows=nr, ncols=2, figsize=(20, 70))
 
-        nr = math.ceil(grouped['make'].nunique() / 2)
-        _, axes = plot.subplots(nrows=nr, ncols=2, figsize=(20, 25))
-
-        for i, make in enumerate(grouped['make'].unique()):
-            g = grouped[grouped['make'] == make]
+        for i, make in enumerate(makes):
+            if make[0] == None :
+                continue
+            g = self.spark.sql(f"SELECT year, count FROM devices WHERE make = '{make[0]}' ORDER BY year")
+            g = g.toPandas()
             g.plot(
-                x="year", y="count", kind="bar", title=make, ax=axes[math.floor(i / 2), i % 2]
+                x="year", y="count", kind="bar", title=make[0], ax=axes[math.floor(i / 2), i % 2]
             )
-
         plot.savefig('./visualisation_images/devices.png')
         plot.clf()
 
     def get_families(self):
-        top_families = self.df.groupby('family').size().nlargest(20)
-        total_photos = len(self.df)
-        plot.pie(top_families.values, labels=top_families.index, autopct=lambda p: '{:.1f}%'.format(p * (sum(top_families.values)/total_photos)))
+        top_families = self.spark.sql("""
+                SELECT family, COUNT(*) AS count
+                FROM visualisation
+                GROUP BY family
+                ORDER BY count DESC
+                LIMIT 20
+            """)
+        total_photos = self.dfspark.count()
+        top_families_list = top_families.collect()
+        labels = [row['family'] for row in top_families_list]
+        sizes = [row['count'] for row in top_families_list]
+        percentages = [size / total_photos * 100 for size in sizes]
+
+        fig, ax = plot.subplots()
+        ax.pie(sizes, labels=labels, autopct=lambda p: '{:.1f}%'.format(p))
         plot.title('Répartition des photos par famille')
 
         plot.savefig('./visualisation_images/top_families_pie_chart.png')
@@ -117,20 +127,29 @@ class Visualisation:
 
 
     def get_top_families(self):
-        top_families = self.df.groupby('family').size().nlargest(20)
+        top_families = self.spark.sql("""
+                SELECT family, COUNT(*) AS count
+                FROM visualisation
+                GROUP BY family
+                ORDER BY count DESC
+                LIMIT 20
+            """)
+        top_families_list = top_families.collect()[:20]
+        labels = [row['family'] for row in top_families_list]
+        sizes = [row['count'] for row in top_families_list]
         plot.title("Nombe des photos des 20 plus grandes familles")
-        plot.bar(top_families.index, top_families.values)
+        plot.bar(labels, sizes)
         plot.xlabel('Familles')
         plot.xticks(rotation=90)
         plot.ylabel('Nombre de photos')
-        #plot.show()
-
         plot.savefig('./visualisation_images/top_families_graph.png')
         plot.clf()
 
     
     def get_wordcloud_families(self):
-        captions = ' '.join(self.df['family'].astype(str))
+        captions = self.dfspark.select(collect_list('family').alias('family_list')) \
+             .select(concat_ws(' ', 'family_list').alias('captions')) \
+             .collect()[0]['captions']
 
         wordcloud = WordCloud(width=800, height=400, max_words=200, background_color='white').generate(captions)
 
@@ -143,25 +162,26 @@ class Visualisation:
 
 
     def get_colors(self):
-        colors = [color for list_color in self.df['dominated_colors_name'] if list_color is not None for color in list_color]
-
-        color_counts = pd.DataFrame(colors, columns=['color'])
-
-        colors_size = color_counts.groupby("color").size().nlargest(10)
-        total_colors = len(color_counts)
-        print(colors_size)
-        print(total_colors)
-        plot.pie(colors_size.values, labels=colors_size.index, autopct=lambda p: '{:.1f}%'.format(p * (sum(colors_size.values)/total_colors)))
+        df_colors = self.dfspark.select(explode(self.dfspark.dominated_colors_name).alias('color'))
+        color_counts = df_colors.groupBy('color').count().orderBy('count', ascending=False)
+        color_size = color_counts.collect()[:10]
+        color_labels = [row["color"] for row in color_size]
+        color_values = [row["count"] for row in color_size]
+        total_colors = color_counts.agg({"count": "sum"}).collect()[0][0]
+        plot.pie(color_values, labels=color_labels, autopct=lambda p: '{:.1f}%'.format(p * (sum(color_values)/total_colors)))
         plot.title('Répartition des couleurs dominantes')
 
         plot.savefig('./visualisation_images/colors.png')
         plot.clf()
 
     def get_wordcloud_colors(self):
+        df_colors = self.dfspark.select(explode(self.dfspark.dominated_colors_name).alias('color'))
+        color_counts = df_colors.groupBy('color').count().orderBy('count', ascending=False)
+        
 
-        colors = [color for list_color in self.df['dominated_colors_name'] if list_color is not None for color in list_color]
-        color_counts = pd.DataFrame(colors, columns=['color'])
-        captions = ' '.join(color_counts['color'].astype(str))
+        color_size = color_counts.collect()
+        colors = [row["color"] for row in color_size]
+        captions = ' '.join(colors)
 
         wordcloud = WordCloud(width=800, height=400, max_words=200, background_color='white').generate(captions)
 
@@ -170,6 +190,30 @@ class Visualisation:
         plot.axis('off')
 
         plot.savefig('./visualisation_images/wordcloud_colors.png')
+        plot.clf()
+    
+    def get_region(self):
+        region_size = self.dfspark.groupBy("location").count().withColumnRenamed("count", "size")
+        total_region = region_size.agg({"size": "sum"}).collect()[0][0]
+        region_size = region_size.collect()
+        region_labels = [row["location"] for row in region_size]
+        region_values = [row["size"] for row in region_size]
+        plot.pie(region_values, labels=region_labels, autopct=lambda p: '{:.1f}%'.format(p * (sum(region_values)/total_region)))
+        plot.title('Répartition des zones géographique des espèces')
+        plot.savefig('./visualisation_images/region.png')
+        plot.clf()
+    
+    def get_wordcloud_region(self):
+        region_size = self.dfspark.groupBy("location").count().withColumnRenamed("count", "size")
+        total_region = region_size.agg({"size": "sum"}).collect()[0][0]
+        region_size = region_size.collect()
+        region_labels = [row["location"] for row in region_size]
+        captions = ' '.join(region_labels)
+        wordcloud = WordCloud(width=800, height=400, max_words=200, background_color='white').generate(captions)
+        plt.figure(figsize=(12, 6))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
+        plot.savefig('./visualisation_images/wordcloud_regions.png')
         plot.clf()
 
     def generate_images(self):
@@ -181,6 +225,8 @@ class Visualisation:
         self.get_wordcloud_colors()
         self.get_wordcloud_families()
         self.get_years()
+        self.get_region()
+        self.get_wordcloud_region()
 
 
 
