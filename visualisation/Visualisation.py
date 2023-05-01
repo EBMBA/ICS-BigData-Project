@@ -4,6 +4,10 @@ import pandas as pd
 import math
 import matplotlib.pyplot as plot
 from wordcloud import WordCloud
+from pyspark import SparkConf
+from pyspark.context import SparkContext
+from pyspark.sql import SparkSession 
+import pyarrow 
 
 
 class Visualisation:
@@ -56,6 +60,9 @@ class Visualisation:
                 })
 
         self.df = pd.DataFrame(data)
+        spark = SparkSession.builder.getOrCreate()
+        self.dfspark = spark.createDataFrame(self.df)
+
 
     def get_years(self):
 
@@ -68,6 +75,19 @@ class Visualisation:
 
         plot.savefig('./visualisation_images/years.png')
         plot.clf()
+
+    def get_years_spark(self):
+
+        year_counts = self.df.groupby('year').size()
+
+        plot.bar(year_counts.index, year_counts.values)
+        plot.xlabel('Année')
+        plot.ylabel('Nombre de photos')
+        plot.xticks(rotation=90)
+
+        plot.savefig('./visualisation_images/years.png')
+        plot.clf()
+
 
     def get_devices(self):
         grouped = self.df.groupby(['year', 'make']).size()
