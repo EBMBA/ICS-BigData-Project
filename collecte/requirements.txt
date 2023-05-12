@@ -1,0 +1,4 @@
+aiosqlite==0.18.0
+SPARQLWrapper==2.0.0
+requests==2.28.2
+pandas==1.5.3
