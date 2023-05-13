@@ -11,7 +11,6 @@ class SQLiteDB:
         if not self.table_exist():
             self.create_table()
 
-    
     def close(self):
         if self.connection:
             self.connection.close()
@@ -41,4 +40,13 @@ class SQLiteDB:
         cursor.execute(query, tuple(kwargs.values()))
         self.connection.commit()
         cursor.close()
+
+    def update_record(self, id, **kwargs):
+        cursor = self.connection.cursor()
+        set_values = ', '.join([f"{column} = ?" for column in kwargs.keys()])
+        query = f"UPDATE {self.TABLE_NAME} SET {set_values} WHERE id = ?"
+        cursor.execute(query, tuple(kwargs.values()) + (id,))
+        self.connection.commit()
+        cursor.close()
+
     
