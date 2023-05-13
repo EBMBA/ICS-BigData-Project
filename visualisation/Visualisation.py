@@ -8,7 +8,6 @@ from pyspark import SparkConf
 from pyspark.context import SparkContext
 from pyspark import sql
 from pyspark.sql import SparkSession 
-import pyarrow 
 import matplotlib.pyplot as plt
 from pyspark.sql.functions import collect_list, concat_ws, explode
 
