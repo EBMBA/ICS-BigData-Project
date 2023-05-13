@@ -3,6 +3,8 @@ metadata/
 metadata.json
 metadata.json.bak
 user_data.json
+taxon.db
+
 
 *.bundle.*
 lib/

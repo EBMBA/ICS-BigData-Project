@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Préférence de l'utilisateur</title>
+</head>
+<body>
+	<h1>Préférence de l'utilisateur {{user_id}}</h1>
+	<ul>
+		<p>Images aimées par l'utilisateur</p>
+		{% for image in images_liked %}
+			<li><img src="{{ url_for('static', filename=image) }}"></li>
+		{% endfor %}
+		<p>Images non-aimées par l'utilisateur</p>
+		{% for image in images_disliked %}
+			<li><img src="{{ url_for('static', filename=image) }}"></li>
+		{% endfor %}
+	</ul>
+</body>
+</html>

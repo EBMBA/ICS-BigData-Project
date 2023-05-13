@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Recommandation d'images</title>
+</head>
+<body>
+	<h1>Recommandation pour l'utilisateur {{user_id}}</h1>
+	<ul>
+		<li><img src="{{ url_for('static', filename=image) }}"></li>
+		<p>{{image_status}}</p>
+	</ul>
+</body>
+</html>

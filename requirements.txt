@@ -18,3 +18,4 @@ geopandas
 opencv-python
 torch
 wordcloud
+flask
