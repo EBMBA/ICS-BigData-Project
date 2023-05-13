@@ -6,6 +6,10 @@ import numpy as np
 from sklearn.cluster import KMeans
 import webcolors
 import math
+from Sqlitedb import SQLiteDB
+import pandas as pd
+
+from pyspark.sql.functions import col
 
 class Annotation:
 
@@ -19,11 +23,30 @@ class Annotation:
     "DateTimeDigitized"
     ]
 
-    PATH = '../images'
+    SQL_EXIF_COLUMN = {
+        'DateTimeOriginal' : 'date_original',
+        'DateTimeDigitized' : 'date_digitalized',
+        'DateTime' : 'date',
+        'Orientation' : 'orientation',
+        'Model' : 'model',
+        'Copyright' : 'copyright',
+        'Make' : 'make'
+    }
+
+    PATH = '../collecte/images'
+
+
+    def __init__(self) -> None:
+        self.db = SQLiteDB()
+
+    def map_exif_to_sql_column(self, exif):
+        exif_sql = {}
+        for key, value in exif.items():
+            exif_sql[self.SQL_EXIF_COLUMN[key]] = value
+        return exif_sql
 
     def getDominatedColors(self, imgfile):
         # Parcourir les fichiers dans le répertoire d'images
-        print(imgfile)
         numarray = np.array(imgfile.getdata(), np.uint8)
         colors = []
         if len(numarray.shape) == 2:
@@ -51,67 +74,44 @@ class Annotation:
             min_colours[(rd + gd + bd)] = name
         return min_colours[min(min_colours.keys())]
 
+
     def run(self):
 
-        metadata = []
-        print('run')
-        # Parcourir les fichiers dans le répertoire d'images
-        for filename in os.listdir('../images'):
-            print(filename)
-            if filename.endswith('.jpg') or filename.endswith('.JPG') or filename.endswith('.jpeg') or filename.endswith('.png'):
-                with Image.open(os.path.join(self.PATH, filename)) as img:
-                    json_path = os.path.join("../metadata", filename.replace(".jpg", ".json").replace(".JPG", ".json").replace(".jpeg", ".json").replace(".png", ".json"))
-                    if os.path.exists(json_path):
-                        with open(json_path, 'r') as f:
-                            existing_metadata = json.load(f)
-                    # else:
-                    #     existing_metadata = []
+        df = self.db.read_table('images').toPandas()
 
-                    if 'dominated_colors_name' in existing_metadata.keys() :
-                        print("Already treated")
-                        pass
+        df = self.db.read_table('images').toPandas()
+        for row in df.itertuples():
+            # Accéder à la valeur par sa clé
+            if row.image_name.endswith('.jpg') or row.image_name.endswith('.JPG') or row.image_name.endswith('.jpeg') or row.image_name.endswith('.png'):
+                
+                with Image.open(os.path.join(self.PATH, row.image_name)) as img:
 
+                    colors_dominated = self.getDominatedColors(img)
                     exif_data = img.getexif()
                     exif = {}
                     if exif_data:
                         for tag, value in exif_data.items():
                             decoded_tag = TAGS.get(tag, tag)
-                            if decoded_tag in self.exif_data_interested:
+                            if decoded_tag in self.EXIF_DATA:
                                 exif[decoded_tag] = value
-
-                    colors_dominated = self.getDominatedColors(img)
-                    colors_dominated_name = []
-
-                    print(colors_dominated)
-
-                    for color in colors_dominated:
-                        colors_dominated_name.append(self.get_closest_color(ImageColor.getcolor(color, "RGB")))
+                exif_to_insert = self.map_exif_to_sql_column(exif)
+                for column, value in exif_to_insert.items():
+                    self.db.update_record(row.id, **{column: value})
 
 
 
-                    # Add the new metadata to the list
-                    # print(existing_metadata)
-
-                    existing_metadata['filename']= filename
-                    existing_metadata['width']= img.width
-                    existing_metadata['height']= img.height
-                    existing_metadata['format']= img.format
-                    existing_metadata['mode']= img.mode
-                    existing_metadata['dominated_colors']= colors_dominated
-                    existing_metadata['dominated_colors_name']= colors_dominated_name
-                    existing_metadata['exif']= exif
+                colors_dominated_name = []
+                for color in colors_dominated:
+                    colors_dominated_name.append(self.get_closest_color(ImageColor.getcolor(color, "RGB")))
 
 
-                    # Save the metadata to a JSON file
-                    with open(json_path, 'w') as f:
-                        json.dump(existing_metadata, f, cls=CustomEncoder)
+                self.db.update_record(row.id, colors1_name = colors_dominated_name[0])
+                self.db.update_record(row.id,  colors2_name = colors_dominated_name[1])
+                
 
 
-class CustomEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, bytes):
-            return obj.decode('utf-8', 'ignore')
-        return super().default(obj)
+
+
 
 
 
