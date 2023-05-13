@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 class SQLiteDB:
     
     TABLE_NAME ='images'
-    DB_NAME = '../collecte/taxon.db'
+    DB_NAME = './shared/taxon.db'
     def __init__(self):
         self.connection = sqlite3.connect(self.DB_NAME)
         self.spark = SparkSession.builder.appName("SQLiteDB").getOrCreate()

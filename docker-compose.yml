@@ -1,0 +1,14 @@
+version: '3'
+services:
+  annotation:
+    build:
+      context: ./annotation
+    volumes:
+      - ./shared:/app/shared
+    ports:
+      - "3001:3001"
+  collecte:
+    build:
+      context: ./collecte
+    volumes:
+      - ./shared:/app/shared

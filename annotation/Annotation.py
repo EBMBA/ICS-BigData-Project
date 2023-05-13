@@ -33,7 +33,7 @@ class Annotation:
         'Make' : 'make'
     }
 
-    PATH = '../collecte/images'
+    PATH = './shared/images'
 
 
     def __init__(self) -> None:
@@ -66,7 +66,7 @@ class Annotation:
     # https://stackoverflow.com/questions/70967119/webcolors-has-no-attribute-css3-hex-to-names
     def get_closest_color(self, rgb_triplet):
         min_colours = {}
-        for key, name in webcolors.css3_hex_to_names.items():
+        for key, name in webcolors.CSS3_HEX_TO_NAMES.items():
             r_c, g_c, b_c = webcolors.hex_to_rgb(key)
             rd = (r_c - rgb_triplet[0]) ** 2
             gd = (g_c - rgb_triplet[1]) ** 2

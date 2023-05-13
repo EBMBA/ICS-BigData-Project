@@ -75,12 +75,12 @@ class Collecte:
                 self.db.insert_record(name = row["name"], scientific_name = row["scientific_name"], family = row["family"], location = row["location"], image_name = image_filename)
 
     def download_image(self, url):
-        if not os.path.exists("images"):
-            os.mkdir("images")
+        if not os.path.exists("./shared/images"):
+            os.mkdir("./shared/images")
         headers = {"User-Agent": "Mozilla/5.0"}
         request = requests.get(url, allow_redirects=True, headers=headers, stream=True)
         if request.status_code == 200:
-            filename = os.path.join("images", os.path.basename(url))            
+            filename = os.path.join("./shared/images", os.path.basename(url))            
             if len(filename) > 50:
                 return
             with open(filename, "wb") as image:
