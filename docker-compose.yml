@@ -7,8 +7,40 @@ services:
       - ./shared:/app/shared
     ports:
       - "3001:3001"
+    networks:
+      - my-network
   collecte:
     build:
       context: ./collecte
     volumes:
       - ./shared:/app/shared
+    networks:
+      - my-network
+  recommandation:
+    build:
+      context: ./analyse_recommandation
+    volumes:
+      - ./shared:/app/shared
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+
+  notebook:
+    image: jupyter/base-notebook
+    volumes:
+      - ./notebook:/home/jovyan/
+      - ./shared:/home/jovyan/
+
+    ports:
+      - "8888:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - GRANT_SUDO=yes
+      - JUPYTER_TOKEN=''
+    command: start.sh jupyter lab --NotebookApp.token=''
+    networks:
+      - my-network
+
+networks:
+  my-network:

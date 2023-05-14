@@ -77,10 +77,10 @@ class Annotation:
 
     def run(self):
 
-        df = self.db.read_table('images').toPandas()
-
+        print('annotation_running')
         df = self.db.read_table('images').toPandas()
         for row in df.itertuples():
+            print(f'annotation for {row.name}')
             # Accéder à la valeur par sa clé
             if row.image_name.endswith('.jpg') or row.image_name.endswith('.JPG') or row.image_name.endswith('.jpeg') or row.image_name.endswith('.png'):
                 
