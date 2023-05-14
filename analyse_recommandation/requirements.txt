@@ -1,0 +1,13 @@
+pyspark
+aiosqlite==0.18.0
+fastapi
+uvicorn
+Pillow
+numpy
+kmeans
+scikit-learn
+matplotlib
+scipy
+webcolors
+pandas
+Flask

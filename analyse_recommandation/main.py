@@ -3,11 +3,13 @@ import os
 from flask import Flask, render_template, make_response
 from Sqlitedb import SQLiteDB
 
-app = Flask(__name__, static_folder='images/')
+app = Flask(__name__, static_folder='./shared/images/')
 
 @app.route('/analyse')
 def analyse_all():
+    print('analyse running')
     analyse = Analyse()
+    analyse.clean_users_preferences()
     analyse.generate_all_users_preferences(number_of_images=2)
     return make_response("ok")
 
@@ -35,7 +37,6 @@ def recommandation(image_id, user_id):
     prediction = analyse.predict(imaged_id=int(image_id), user_id=int(user_id))
     print("prediction : ", prediction)
     if prediction == "favorite":
-
         image_status=" Image would be liked by the user"
     else:
         image_status=" Image would be disliked by the user"
@@ -89,4 +90,4 @@ def dislike_image(image_id, user_id):
     return make_response("OK")
 
 if __name__ == "__main__":
-    app.run(port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

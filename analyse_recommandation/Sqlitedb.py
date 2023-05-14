@@ -7,7 +7,7 @@ class SQLiteDB:
     TABLE_USER_NAME = 'users'
     TABLE_LIKED_NAME = 'liked'
     TABLE_DISLIKED_NAME = 'disliked'
-    DB_NAME = 'taxon.db'
+    DB_NAME = './shared/taxon.db'
     def __init__(self):
         self.connection = sqlite3.connect(self.DB_NAME)
         self.spark = SparkSession.builder.appName("SQLiteDB").getOrCreate()
