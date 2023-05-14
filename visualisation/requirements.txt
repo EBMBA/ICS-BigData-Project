@@ -1,0 +1,6 @@
+pyspark
+pandas
+matplotlib
+wordcloud
+flask
+aiosqlite==0.18.0
