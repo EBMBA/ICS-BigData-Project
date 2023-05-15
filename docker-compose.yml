@@ -7,15 +7,11 @@ services:
       - ./shared:/app/shared
     ports:
       - "3001:3001"
-    networks:
-      - my-network
   collecte:
     build:
       context: ./collecte
     volumes:
       - ./shared:/app/shared
-    networks:
-      - my-network
   recommandation:
     build:
       context: ./analyse_recommandation
@@ -23,24 +19,28 @@ services:
       - ./shared:/app/shared
     ports:
       - "8080:8080"
-    networks:
-      - my-network
 
   notebook:
-    image: jupyter/base-notebook
+    image: jupyter/pyspark-notebook
     volumes:
       - ./notebook:/home/jovyan/
-      - ./shared:/home/jovyan/
+      - ./shared:/home/jovyan/shared
 
     ports:
       - "8888:8888"
     environment:
+      - PYSPARK_SUBMIT_ARGS='--jars /home/jovyan/sqlite-jdbc.jar  pyspark-shell'
       - JUPYTER_ENABLE_LAB=yes
       - GRANT_SUDO=yes
       - JUPYTER_TOKEN=''
     command: start.sh jupyter lab --NotebookApp.token=''
-    networks:
-      - my-network
+  
+  visualisation:
+    build:
+      context: ./visualisation
+    volumes:
+      - ./shared:/app/shared
+      - ./visualisation_images:/app/visualisation_images
+    ports:
+      - "3002:3002"
 
-networks:
-  my-network:

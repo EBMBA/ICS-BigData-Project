@@ -10,6 +10,8 @@ async def annotate_pictures():
     print('annotation received')
     annotation = Annotation()
     annotation.run()
+    url = 'http://visualisation:3002/generate'
+    response = requests.get(url)
     url = 'http://recommandation:8080/analyse'
 
     response = requests.get(url)
