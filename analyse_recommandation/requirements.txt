@@ -11,3 +11,6 @@ scipy
 webcolors
 pandas
 Flask
+flask-swagger
+flask-restful
+flask-swagger-ui

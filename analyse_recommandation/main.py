@@ -2,8 +2,12 @@ from Analyse import Analyse
 import os
 from flask import Flask, render_template, make_response
 from Sqlitedb import SQLiteDB
+from flask_swagger import swagger
+from flask_swagger_ui import get_swaggerui_blueprint
+from flask_restful import Api
 
 app = Flask(__name__, static_folder='./shared/images/')
+api = Api(app)
 
 @app.route('/analyse')
 def analyse_all():
@@ -89,5 +93,179 @@ def dislike_image(image_id, user_id):
     analyse.set_disliked_images(image_disliked, user_id=int(user_id))
     return make_response("OK")
 
+
+@app.route('/swagger')
+def swagger_ui():
+    swag = swagger(app, prefix='/api')
+    swag['info']['title'] = 'Container visualisation'
+    swag['info']['version'] = '1.0'
+    swag['info']['description'] = 'Documentation de la visualisation'
+    swag['paths']['/analyse'] = {
+        'get': {
+            'summary': 'Générer des préférences',
+            'description': "Génère des utilisateurs et des préférences d'images associées",
+            'responses': {
+                '200': {
+                    'description': 'Succès'
+                }
+            }
+        }
+    }
+
+    swag['paths']['/analyse/<user_id>'] = {
+        'get': {
+            'summary': 'Afficher les préférences utilisateurs',
+            'description': "Affiche une page avec les photos likées et dislikées par l'utilisateur",
+            'parameters': [
+            {
+                'name': 'user_id',
+                'in': 'path',
+                'description': 'ID de l\'utilisateur',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            }
+        ],
+            'responses': {
+                '200': {
+                    'description': 'Succès'
+                }
+            }
+        }
+    }
+    swag['paths']['/user/<user_id>/image/<image_id>'] = {
+        'get': {
+            'summary': 'Afficher une image et sa recommandation',
+            'description': "Afficher une image et si ou non elle serait recommandée ens a basant sur les préférences de l'utilisateur ",
+            'parameters': [
+            {
+                'name': 'user_id',
+                'in': 'path',
+                'description': 'ID de l\'utilisateur',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            },
+                        {
+                'name': 'image_id',
+                'in': 'path',
+                'description': 'ID de l\'image',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            }
+        ],
+            'responses': {
+                '200': {
+                    'description': 'Succès'
+                }
+            }
+        }
+    }
+
+    swag['paths']['/user/<user_id>/image/random'] = {
+        'get': {
+            'summary': 'Afficher une image random et sa recommandation',
+            'description': "Afficher une image random et si ou non elle serait recommandée ens a basant sur les préférences de l'utilisateur ",
+            'parameters': [
+            {
+                'name': 'user_id',
+                'in': 'path',
+                'description': 'ID de l\'utilisateur',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            }],
+            'responses': {
+                '200': {
+                    'description': 'Succès'
+                }
+            }
+        }
+    }
+
+    swag['paths']['/user/<user_id>/image/<image_id>/liked'] = {
+        'get': {
+            'summary': 'Défini la photo comme likée',
+            'description': "Défini la photo comme likée par l'utilisateur",
+                        'parameters': [
+            {
+                'name': 'user_id',
+                'in': 'path',
+                'description': 'ID de l\'utilisateur',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            },
+                        {
+                'name': 'image_id',
+                'in': 'path',
+                'description': 'ID de l\'image',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            }
+        ],
+            'responses': {
+                '200': {
+                    'description': 'Succès'
+                }
+            }
+        }
+    }
+
+    swag['paths']['/user/<user_id>/image/<image_id>/disliked'] = {
+        'get': {
+            'summary': 'Défini la photo comme likée',
+            'description': "Défini la photo comme likée par l'utilisateur",
+                        'parameters': [
+            {
+                'name': 'user_id',
+                'in': 'path',
+                'description': 'ID de l\'utilisateur',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            },
+                        {
+                'name': 'image_id',
+                'in': 'path',
+                'description': 'ID de l\'image',
+                'required': True,
+                'schema': {
+                    'type': 'integer'
+                }
+            }
+        ],
+            'responses': {
+                '200': {
+                    'description': 'Succès'
+                }
+            }
+        }
+    }
+
+
+    return swag
+
 if __name__ == "__main__":
+    SWAGGER_URL = '/swagger-ui'
+    API_URL = '/swagger'
+
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "Container visualisation"
+        }
+    )
+
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
     app.run(host='0.0.0.0', port=8080, debug=True)
