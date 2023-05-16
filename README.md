@@ -32,8 +32,7 @@ Les ports utilisés par les différents conteneurs sur la machine sont les suiva
 
 Les apis disposent d'une documentation swagger qui est disponible sur les liens suivants :
 -   annotation : 
-    - http://localhost:3001/swagger-ui 
-    - http://localhost:3001/swagger
+    - http://localhost:3001/docs
 -   analyse/recommandation :
     - http://localhost:8080/swagger-ui
     - http://localhost:8080/swagger
