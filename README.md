@@ -29,3 +29,15 @@ Les ports utilisés par les différents conteneurs sur la machine sont les suiva
 -   analyse/recommandation : 8080
 -   visualisation : 3002
 -   notebook : 8888
+
+Les apis disposent d'une documentation swagger qui est disponible sur les liens suivants :
+-   annotation : 
+    - http://localhost:3001/swagger-ui 
+    - http://localhost:3001/swagger
+-   analyse/recommandation :
+    - http://localhost:8080/swagger-ui
+    - http://localhost:8080/swagger
+-   visualisation :
+    - http://localhost:3002/swagger-ui
+    - http://localhost:3002/swagger
+
